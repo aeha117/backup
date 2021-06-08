@@ -1,0 +1,83 @@
+[[extend 'layout.html']]
+
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+
+
+<div class="section" id="vue-target" v-cloak>
+    <!-- Put here your Vue.js template -->
+    <div class="block" id="search" name="search">
+        <div class="columns">
+            <div class="column">
+                <input v-model="searchbar_val" id="search_bar" class="input is-fullwidth"
+                       placeholder="Filter">
+            </div>
+            <div class="column is-narrow">
+                <div class="level">
+                    <button class="button is-primary" @click="add_recipe()"
+                            style="margin-right: 1em">Add Recipe</button>
+                    <button class="button is-success" @click="discussion()">Discussion</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="block">
+
+        <div class="columns is-multiline">
+            <div class="column is-half-tablet is-one-third-desktop" v-for="recipe in recipes">
+                <div class="card" @click="clicked_recipe(recipe._idx)">
+                    <div class="card-image" v-if="recipe.thumbnail">
+                        <figure class="image is-4by3">
+                            <img :src="recipe.thumbnail"
+                                 :alt="recipe.name + 'thumbnail image'">
+                        </figure>
+                    </div>
+                    <div class="card-content">
+                        <div class="block">
+                            <div class="columns is-mobile">
+                                <div class="column">
+                                    <p class="title is-4">{{ recipe.recipe_name }}</p>
+                                    <p class="subtitle is-6">{{ recipe.user_email }}</p>
+                                </div>
+                                <div class="column is-narrow is-right">
+                                        <span class="subtitle is-6"><span class="icon"><i
+                                                class="fa fa-thumbs-o-up"></i></span>{{ recipe.recipe_likes }}</span>
+                                    <span class="subtitle is-6"><span class="icon"><i
+                                            class="fa fa-thumbs-o-down"></i></span>{{ recipe.recipe_dislikes }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="content">
+                            {{ recipe.recipe_content.substring(0,150) }}{{ (recipe.recipe_content.length > 150) ? '... ' : ' ' }}
+                            <a v-for="tag in recipe.tags"
+                               @click="select_tag(recipe._idx,tag._idx)">#{{ tag.tag_name }} </a>
+                            <br>
+                            <time v-bind:datetime="recipe.date_created">{{ recipe.createdDate.toUTCString() }}</time>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script>
+    let user_email = "[[=XML(user_email)]]";
+    let get_recipes_url = "[[=XML(get_recipes_url)]]";
+    let get_tags_url = "[[=XML(get_tags_url)]]";
+    let add_recipe_url = "[[=XML(add_recipe_url)]]";
+    let discussion_url = "[[=XML(discussion_url)]]";
+    let display_base_url = "[[=XML(display_base_url)]]/";
+</script>
+<script src="js/index.js"></script>
+[[end]]
